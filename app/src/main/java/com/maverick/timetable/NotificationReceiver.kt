@@ -1,5 +1,6 @@
 package com.maverick.timetable
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -39,6 +40,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 .setContentTitle("CS-123")
                 .setContentText("Python lecture")
                 .setLargeIcon(bitmap)
+                .setDefaults(Notification.DEFAULT_ALL)
 //            .setStyle(NotificationCompat.BigPictureStyle().bigLargeIcon(bitmap))
                 .setStyle(
                     (NotificationCompat.BigTextStyle().bigText("Python lecture(Kamakshi Goyal)"))
@@ -48,7 +50,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
             val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             val r = RingtoneManager.getRingtone(context, notification)
-            r.play()
+//            r.play()
 
             with(NotificationManagerCompat.from(context)) {
                 notify(notificationId, builder.build())

@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 //        calendar.set(Calendar.MINUTE, 22)
 //        calendar.set(Calendar.SECOND, 0)
         calendar.time = date
-        calendar.add(Calendar.SECOND, 30)
+//        calendar.add(Calendar.SECOND, 30)
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -64,17 +64,17 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val futureNotificationIn: Long = 5000
         Log.d("test1", "alarm")
-        alarmManager.setInexactRepeating(
+        alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            futureNotificationIn, // 50 minute lecture. 1*60*60*1000
+            60*1000,// 50 minute lecture. 1*60*60*1000
             pendingIntent
         )
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationName = "Lecture TimeTable"
+            val notificationName = "Lecture Timetable"
             val descriptionText = "manage notification"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, notificationName, importance).apply {
