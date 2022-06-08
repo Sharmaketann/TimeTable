@@ -31,9 +31,9 @@ class NotificationReceiver : BroadcastReceiver() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            val intent1 = Intent(context, Hello::class.java)
-            intent1.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            val intent = Intent(context, Timetable::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -45,8 +45,11 @@ class NotificationReceiver : BroadcastReceiver() {
                 .setStyle(
                     (NotificationCompat.BigTextStyle().bigText("Python lecture(Kamakshi Goyal)"))
                 )
-                .setContentIntent(pendingIntent)
+//                .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+
+            builder.setContentIntent(pendingIntent)
 
             val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             val r = RingtoneManager.getRingtone(context, notification)

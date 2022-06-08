@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,56 +21,63 @@ class MainActivity : AppCompatActivity() {
     private lateinit var alarmManager: AlarmManager
     private lateinit var calendar: Calendar
     private lateinit var pendingIntent: PendingIntent
+    private lateinit var name: String
+    private lateinit var className: String
+    private lateinit var division: String
+    private lateinit var sharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-//        moveToTimetable()
+        val isFirstRun = getSharedPreferences("mykey", MODE_PRIVATE).getBoolean("isFirstRun",true)
+
+        if (isFirstRun){
+            val intent = Intent(this,MainActivity::class.java)
+            getSharedPreferences("mykey", MODE_PRIVATE).edit().putBoolean("isFirstRun",false).apply()
+            startActivity(intent)
+        }
+        else{
+            val intent = Intent(this,Timetable::class.java)
+            startActivity(intent)
+        }
+        moveToTimetable()
         createNotificationChannel()
         setAlarm()
     }
 
-//    private fun moveToTimetable() {
-//        binding.next.setOnClickListener {
-//            val name = binding.nameText.text.toString()
-//            val className = binding.classText.text.toString()
-//            val division = binding.divisionText.text.toString()
-//            val intent = Intent(this, Timetable::class.java)
-//            intent.putExtra("username", name)
-//            intent.putExtra("class", className)
-//            intent.putExtra("division", division)
-//            startActivity(intent)
-//            finish()
-//        }
-//    }
+    private fun moveToTimetable() {
+        binding.next.setOnClickListener {
+            val intent = Intent(this, Timetable::class.java)
+            name = binding.nameText.text.toString()
+            className = binding.classText.text.toString()
+            division = binding.divisionText.text.toString()
+            sharedPreferences = getSharedPreferences("mykey", MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("username", name)
+            editor.putString("classname", className)
+            editor.putString("division", division)
+            editor.apply()
+            startActivity(intent)
+            finish()
+        }
+    }
 
     private fun setAlarm() {
         val date = Date()
         calendar = Calendar.getInstance()
-//        calendar.set(Calendar.HOUR_OF_DAY, 17)
-//        calendar.set(Calendar.MINUTE, 22)
-//        calendar.set(Calendar.SECOND, 0)
         calendar.time = date
-        calendar.set(Calendar.SECOND,0)
-        calendar.set(Calendar.MILLISECOND,0)
-//        calendar.add(Calendar.SECOND, 30)
-        calendar.add(Calendar.MINUTE,1)
-
-        Log.d("time",calendar.time.toString())
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.add(Calendar.MINUTE, 1)
+        Log.d("time", calendar.time.toString())
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-//        val thuReq: Long = Calendar.getInstance().timeInMillis + 1
-//        val reqReqCode = thuReq.toInt()
-//        if (calendar.timeInMillis < System.currentTimeMillis()) {
-//            calendar.add(Calendar.DAY_OF_YEAR, 1)
-//        }
         val intent = Intent(this, NotificationReceiver::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
         pendingIntent =
             PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val futureNotificationIn: Long = 5000
+//        val futureNotificationIn: Long = 5000
         Log.d("test1", "alarm")
-        alarmManager.setExact(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.time.time,
             pendingIntent
