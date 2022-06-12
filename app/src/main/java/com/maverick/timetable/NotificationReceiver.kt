@@ -51,8 +51,8 @@ class NotificationReceiver : BroadcastReceiver() {
 
             builder.setContentIntent(pendingIntent)
 
-            val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            val r = RingtoneManager.getRingtone(context, notification)
+//            val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+//            val r = RingtoneManager.getRingtone(context, notification)
 //            r.play()
 
             with(NotificationManagerCompat.from(context)) {

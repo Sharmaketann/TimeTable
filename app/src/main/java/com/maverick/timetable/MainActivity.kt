@@ -5,11 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.maverick.timetable.databinding.ActivityMainBinding
@@ -25,23 +27,41 @@ class MainActivity : AppCompatActivity() {
     private lateinit var className: String
     private lateinit var division: String
     private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val isFirstRun = getSharedPreferences("mykey", MODE_PRIVATE).getBoolean("isFirstRun",true)
 
-        if (isFirstRun){
-            val intent = Intent(this,MainActivity::class.java)
-            getSharedPreferences("mykey", MODE_PRIVATE).edit().putBoolean("isFirstRun",false).apply()
+        sharedPreferences = getSharedPreferences("mykey", MODE_PRIVATE)
+        val isFirstStart = sharedPreferences.getBoolean("firstStart", false)
+
+        if (isFirstStart) {//opens activity only once.
+            val intent = Intent(this, Timetable::class.java)
             startActivity(intent)
+            finish()
+        } else {
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("firstStart", true).apply()
         }
-        else{
-            val intent = Intent(this,Timetable::class.java)
-            startActivity(intent)
-        }
+
         moveToTimetable()
         createNotificationChannel()
         setAlarm()
+//        if (binding.nameText.text.isNullOrEmpty() || binding.classText.text.isNullOrEmpty() || binding.divisionText.text.isNullOrEmpty())
+//            allFieldsFilled()
+    }
+
+    private fun allFieldsFilled() {
+        binding.next.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(this)
+                .setTitle("Warning")
+                .setMessage("Fill all the fields.")
+                .setPositiveButton("ok") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                .create()
+            alertDialog.show()
+        }
     }
 
     private fun moveToTimetable() {
@@ -68,20 +88,25 @@ class MainActivity : AppCompatActivity() {
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
         calendar.add(Calendar.MINUTE, 1)
-        Log.d("time", calendar.time.toString())
+        Log.d("time", calendar.time.time.toString())
+
+        val thuReq: Long = Calendar.getInstance().timeInMillis + 1
+        val requestCode = thuReq.toInt()
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, NotificationReceiver::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
         pendingIntent =
-            PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//        val futureNotificationIn: Long = 5000
+            PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         Log.d("test1", "alarm")
-        alarmManager.setExactAndAllowWhileIdle(
+
+//        if (division == "A") {
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             calendar.time.time,
             pendingIntent
         )
+//        }
     }
 
     private fun createNotificationChannel() {
