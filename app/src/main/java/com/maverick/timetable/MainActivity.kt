@@ -92,20 +92,32 @@ class MainActivity : AppCompatActivity() {
 
         val thuReq: Long = Calendar.getInstance().timeInMillis + 1
         val requestCode = thuReq.toInt()
-
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, NotificationReceiver::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-        pendingIntent =
-            PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        Log.d("test1", "alarm")
+//        pendingIntent =
+//            PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_ONE_SHOT)
+//        Log.d("test1", "alarm")
 
-//        if (division == "A") {
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            calendar.time.time,
-            pendingIntent
-        )
+
+//        alarmManager.setInexactRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.time.time,
+//            30000,
+//            pendingIntent
+//        )
+
+//        if (binding.divisionText.text.toString() == "A") {
+//            Log.d("test1", "alarm")
+//            intent.putExtra("notificationTitle", "CS - 123")
+//            intent.putExtra("notificationContent", "R maam")
+//            pendingIntent =
+//                PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_ONE_SHOT)
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                calendar.time.time + 30000,
+//                pendingIntent
+//            )
 //        }
     }
 
