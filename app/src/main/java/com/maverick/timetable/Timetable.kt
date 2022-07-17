@@ -49,15 +49,13 @@ class Timetable : AppCompatActivity() {
         Log.d("set", calendar.get(Calendar.MINUTE).toString())
         Log.d("set", calendar.get(Calendar.SECOND).toString())
 
-//        val thuReq: Long = Calendar.getInstance().timeInMillis + 1
-//        val requestCode = thuReq.toInt()
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, NotificationReceiver::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
 
-        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
-            calendar.add(Calendar.DATE, 1);
-        }
+//        while (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+//            calendar.add(Calendar.DATE, 1)
+//        }
         if (division == "A") {
             calendar.set(Calendar.HOUR_OF_DAY, 13)
             calendar.set(Calendar.MINUTE, 55)
@@ -70,15 +68,19 @@ class Timetable : AppCompatActivity() {
                 pendingIntent =
                     PendingIntent.getBroadcast(
                         this,
-                        calendar.timeInMillis.toInt(),
+                        0,
                         intent,
                         PendingIntent.FLAG_ONE_SHOT
                     )
-                setAlarm()
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.time.time + 30000,
+                    pendingIntent
+                )
             }
             calendar.set(Calendar.HOUR_OF_DAY, 14)
-            calendar.set(Calendar.MINUTE, 55)
-            if (calendar.get(Calendar.HOUR_OF_DAY) >= currentHour && calendar.get(Calendar.MINUTE) >= currentMinute) {
+            calendar.set(Calendar.MINUTE, 50)
+            if (calendar.get(Calendar.HOUR_OF_DAY) >= currentHour && calendar.get(Calendar.MINUTE) >= currentMinute) { //dont compare based on minute.
                 Log.d("set", calendar.get(Calendar.HOUR_OF_DAY).toString())
                 Log.d("set", calendar.get(Calendar.MINUTE).toString())
                 Log.d("test2", calendar.time.time.toString() + 1)
@@ -87,14 +89,18 @@ class Timetable : AppCompatActivity() {
                 pendingIntent =
                     PendingIntent.getBroadcast(
                         this,
-                        calendar.time.time.toInt() + 1,
+                        1,
                         intent,
                         PendingIntent.FLAG_ONE_SHOT
                     )
-                setAlarm()
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.time.time + 30000,
+                    pendingIntent
+                )
             }
             calendar.set(Calendar.HOUR_OF_DAY, 15)
-            calendar.set(Calendar.MINUTE, 55)
+            calendar.set(Calendar.MINUTE, 35)
             if (calendar.get(Calendar.HOUR_OF_DAY) >= currentHour && calendar.get(Calendar.MINUTE) >= currentMinute) {
                 Log.d("set", calendar.get(Calendar.HOUR_OF_DAY).toString())
                 Log.d("set", calendar.get(Calendar.MINUTE).toString())
@@ -104,14 +110,19 @@ class Timetable : AppCompatActivity() {
                 pendingIntent =
                     PendingIntent.getBroadcast(
                         this,
-                        calendar.time.time.toInt() + 2,
+                        2,
                         intent,
                         PendingIntent.FLAG_ONE_SHOT
                     )
-                setAlarm()
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.time.time + 30000,
+                    pendingIntent
+                )
             }
-            calendar.set(Calendar.HOUR_OF_DAY, 16)
-            calendar.set(Calendar.MINUTE, 55)
+            calendar.set(Calendar.HOUR_OF_DAY, 18)
+            calendar.set(Calendar.MINUTE, 16)
+            calendar.set(Calendar.SECOND,30)
             if (calendar.get(Calendar.HOUR_OF_DAY) >= currentHour && calendar.get(Calendar.MINUTE) >= currentMinute) {
                 Log.d("set", calendar.get(Calendar.HOUR_OF_DAY).toString())
                 Log.d("set", calendar.get(Calendar.MINUTE).toString())
@@ -121,23 +132,17 @@ class Timetable : AppCompatActivity() {
                 pendingIntent =
                     PendingIntent.getBroadcast(
                         this,
-                        calendar.time.time.toInt() + 3,
+                        3,
                         intent,
-                        PendingIntent.FLAG_ONE_SHOT
+                        PendingIntent.FLAG_UPDATE_CURRENT
                     )
-                setAlarm()
-            } else {
-                calendar.add(Calendar.HOUR_OF_DAY, 1)
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.time.time,
+                    pendingIntent
+                )
+//                alarmManager.cancel(pendingIntent)
             }
         }
     }
-
-    private fun setAlarm() {
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            calendar.time.time + 30000,
-            pendingIntent
-        )
-    }
-
 }

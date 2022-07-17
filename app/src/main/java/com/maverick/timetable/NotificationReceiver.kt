@@ -19,10 +19,7 @@ import java.util.*
 
 class NotificationReceiver : BroadcastReceiver() {
     private val CHANNEL_ID = "01"
-    private val notificationId = System.currentTimeMillis().toInt()
-
-//    private val notificationTitles = arrayOf("CS-101", "CS-102", "CS-103")
-//    private val notificationContent = arrayOf("k maam", "R maam", "D maam")
+    private var notificationId = System.currentTimeMillis().toInt()
     override fun onReceive(context: Context, int1: Intent) {
         Log.d("test", "notify success")
         Toast.makeText(context, "it worked.", Toast.LENGTH_SHORT).show()
@@ -72,6 +69,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
             with(NotificationManagerCompat.from(context)) {
                 notify(notificationId, builder.build())
+                notificationId++
             }
         }
 
